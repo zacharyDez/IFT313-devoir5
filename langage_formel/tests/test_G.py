@@ -21,3 +21,10 @@ def test_remove_rule_from_G():
     G.remove_rule("S", "a")
 
     assert not G.has_rule("S", "a")
+
+
+def test_first_k_expected_matches():
+    G = Grammaire()
+    G.add_rule("S", "a")
+
+    assert G.first_k(1, "S") == ["a"]
