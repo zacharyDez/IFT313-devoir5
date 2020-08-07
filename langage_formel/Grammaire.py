@@ -82,7 +82,7 @@ class Grammaire:
 
         return first_k
 
-    def _get_first_k_single_rule(self, k: int, symbol: str, rule: str):
+    def _get_first_k_single_rule(self, k: int, symbol: str, rule: str, max_depth: int = 30):
         self._are_first_k_params_valid(k, symbol, rule)
 
         first_set = set()
@@ -90,7 +90,7 @@ class Grammaire:
             first_set.add(rule[:k])
 
         else:
-            words = self._approx_first(rule)
+            words = self._approx_first(rule, max_depth=max_depth)
             for word in words:
                 first_set.add(word[:k])
 
@@ -100,14 +100,17 @@ class Grammaire:
         rules = self._rules[symbol]
         return self._get_first_k(k, symbol, rules)
 
-    def _approx_first(self, proto):
+    def _approx_first(self, proto, max_depth):
         words = set()
+
         protos = queue.Queue()
         protos.put(proto)
 
-        while not protos.empty():
-            proto = protos.get()
-            self._approx_first_inner(proto, protos, words)
+        cur_depth = 0
+        while not protos.empty() and cur_depth < max_depth:
+            tmp_proto = protos.get()
+            self._approx_first_inner(tmp_proto, protos, words)
+            cur_depth += 1
 
         return words
 
@@ -119,5 +122,6 @@ class Grammaire:
         for i in range(len(proto)):
             if proto[i] in self._variables:
                 for rule in self._rules[proto[i]]:
-                    protos.put(proto[:i] + rule + proto[i + 1:])
+                    new_proto = proto[:i] + rule + proto[i + 1:]
+                    protos.put(new_proto)
                 return
