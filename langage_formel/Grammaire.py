@@ -1,3 +1,6 @@
+import queue
+
+
 class Grammaire:
 
     def __init__(self) -> None:
@@ -51,30 +54,17 @@ class Grammaire:
 
         return False
 
-    def get_first_k(self, k: int, symbol: str) -> set:
-        pass
+    def _are_first_k_params_valid(self, k: int, symbol: str, rule: str) -> tuple:
+        if symbol not in self._variables:
+            return False, symbol
 
-    def get_lookahead(self, symbol: str, output: str, k: int = 100) -> set:
-        first_set = set()
-        if symbol not in self._rules:
-            return first_set
+        if rule not in self._rules[symbol]:
+            return False, rule
 
-        if output not in self._rules[symbol]:
-            return first_set
+        if k <= 0:
+            return False, k
 
-        if k > 0:
-            return first_set
-
-        if symbol == self._initial_symbol:
-            initial_rules = output
-        else:
-            initial_rules = self._rules[self._initial_symbol]
-
-        for rule in initial_rules:
-            rule_words = self._get_words(rule, force_use=(symbol, output), k=k)
-            first_set.update(rule_words)
-
-        return first_set
+        return True
 
     def _proto_contains_variable(self, proto: str) -> bool:
         for ltr in proto:
@@ -83,27 +73,48 @@ class Grammaire:
 
         return False
 
-    def _get_words(self, proto: str, force_use: tuple = (None, None), k: int = 100) -> list():
+    # implementation following http://www.seanerikoconnor.freeservers.com/ComputerScience/Compiler/ParserGeneratorAndParser/QuickReviewOfLRandLALRParsingTheory.html#FIRSTk
+    def _get_first_k(self, k: int, symbol: str, rules: set) -> set:
+        # TODO: apply to multiple rules
+        cp_rules = rules.copy()
+        rule = cp_rules.pop()
+        # with self._are_first_k_params_valid(k, symbol, rule) as valid_m:
+        #     if not valid_m[0]:
+        #         raise AttributeError(f"Found illegal parameter: {valid_m[1]}")
+
+        first_set = set()
+        if not self._proto_contains_variable(rule):
+            first_set.add(rule[:k])
+
+        else:
+            words = self._approx_first(rule)
+            for word in words:
+                first_set.add(word[:k])
+
+        return first_set
+
+    def get_first_k(self, k: int, symbol: str) -> set:
+        rules = self._rules[symbol]
+        return self._get_first_k(k, symbol, rules)
+
+    def _approx_first(self, proto):
         words = set()
-        word = None
+        protos = queue.Queue()
+        protos.put(proto)
 
-        while len(word) < k:
-
-            for ltr in proto:
-                if ltr in self._alphabet:
-                    word += ltr
-
-                elif ltr in self._variables:
-                    if ltr == force_use[0]:
-                        rules = {force_use[1]}
-                    else:
-                        rules = self._rules[ltr]
-
-                    for rule in rules:
-                        for sub_word in self._get_words(rule):
-                            words.add(word + sub_word)
-
-                else:
-                    raise AttributeError(f"{ltr} of proto is not included in alphabet or variables.")
+        while not protos.empty():
+            proto = protos.get()
+            self._approx_first_inner(proto, protos, words)
 
         return words
+
+    def _approx_first_inner(self, proto: str, protos: queue.Queue, words: set) -> None:
+        if not self._proto_contains_variable(proto):
+            words.add(proto)
+            return
+
+        for i in range(len(proto)):
+            if proto[i] in self._variables:
+                for rule in self._rules[proto[i]]:
+                    protos.put(proto[:i] + rule + proto[i + 1:])
+                return

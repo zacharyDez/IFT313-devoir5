@@ -32,17 +32,6 @@ def test_remove_rule_from_G():
     assert not G.has_rule("S", "a")
 
 
-def test_get_lookahead_set():
-    G = setup()
-    G.add_variable("A")
-    G.add_alphabet("b")
-
-    G.add_rule("S", "aA")
-    G.add_rule("A", "b")
-
-    assert G.get_lookahead("S", "aA", 3) == {"ab", "aab"}
-
-
 def test_first_k_expected_matches_simple_one_rule():
     G = setup()
     G.add_rule("S", "a")
@@ -59,4 +48,5 @@ def test_first_k_expected_matches_two_rules():
     G.add_rule("A", "b")
 
     assert G.get_first_k(1, "S") == {"a"}
-    assert G.get_first_k(3, "S") == {"ab", "aab"}
+    assert G.get_first_k(2, "S") == {"ab"}
+    assert G.get_first_k(3, "S") == {"ab"}
