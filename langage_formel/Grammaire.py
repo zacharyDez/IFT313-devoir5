@@ -73,8 +73,9 @@ class Grammaire:
 
         return False
 
-    # implementation following http://www.seanerikoconnor.freeservers.com/ComputerScience/Compiler/ParserGeneratorAndParser/QuickReviewOfLRandLALRParsingTheory.html#FIRSTk
     def _get_first_k(self, k: int, symbol: str, rules: set) -> set:
+        # implementation following
+        #   http://www.seanerikoconnor.freeservers.com/ComputerScience/Compiler/ParserGeneratorAndParser/QuickReviewOfLRandLALRParsingTheory.html#FIRSTk
         first_k = set()
         for rule in rules:
             first_k.update(self._get_first_k_single_rule(k, symbol, rule))
@@ -82,7 +83,8 @@ class Grammaire:
         return first_k
 
     def _get_first_k_single_rule(self, k: int, symbol: str, rule: str):
-        # TODO: add are first params valid
+        self._are_first_k_params_valid(k, symbol, rule)
+
         first_set = set()
         if not self._proto_contains_variable(rule):
             first_set.add(rule[:k])
