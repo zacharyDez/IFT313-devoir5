@@ -1,10 +1,8 @@
 # Implémentation de l'algorithme FIRST
 
-###Auteurs
+**Zachary Déziel** (zachary.deziel@usherbrooke.ca)
 
-Zachary Déziel (zachary.deziel@usherbrooke.ca) 
-
-Samuel Hamman
+**Samuel Hamman**
 
 ## Description
 
