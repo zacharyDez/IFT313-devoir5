@@ -82,7 +82,7 @@ class Grammaire:
 
         return first_k
 
-    def _get_first_k_single_rule(self, k: int, symbol: str, rule: str, max_depth: int = 30):
+    def _get_first_k_single_rule(self, k: int, symbol: str, rule: str, max_depth: int = 30)->set:
         self._are_first_k_params_valid(k, symbol, rule)
 
         first_set = set()
@@ -100,7 +100,7 @@ class Grammaire:
         rules = self._rules[symbol]
         return self._get_first_k(k, symbol, rules)
 
-    def _approx_first(self, proto, max_depth):
+    def _approx_first(self, proto:str, max_depth:int)->set:
         words = set()
 
         protos = queue.Queue()
