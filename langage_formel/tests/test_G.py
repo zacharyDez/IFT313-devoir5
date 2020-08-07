@@ -78,3 +78,20 @@ def test_first_k_recursive_rule():
     assert G.get_first_k(1, "S") == {"a", "c"}
     assert G.get_first_k(2, "S") == {"c", "aa", "ac"}
     assert G.get_first_k(3, "S") == {"aaa", "aac", "ac", "c"}
+
+
+def test_first_k_more_comple():
+    G = setup()
+
+    G.add_alphabet("a")
+    G.add_alphabet("b")
+    G.add_alphabet("c")
+
+    G.add_variable("A")
+
+    G.add_rule("S", "aS")
+    G.add_rule("S", "bA")
+    G.add_rule("S", "c")
+    G.add_rule("A", "a")
+
+    assert G.get_first_k(3, "S") == {"c", "ba", "ac", "aac", "aaa", "aba", "aab"}
