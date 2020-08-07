@@ -75,13 +75,14 @@ class Grammaire:
 
     # implementation following http://www.seanerikoconnor.freeservers.com/ComputerScience/Compiler/ParserGeneratorAndParser/QuickReviewOfLRandLALRParsingTheory.html#FIRSTk
     def _get_first_k(self, k: int, symbol: str, rules: set) -> set:
-        # TODO: apply to multiple rules
-        cp_rules = rules.copy()
-        rule = cp_rules.pop()
-        # with self._are_first_k_params_valid(k, symbol, rule) as valid_m:
-        #     if not valid_m[0]:
-        #         raise AttributeError(f"Found illegal parameter: {valid_m[1]}")
+        first_k = set()
+        for rule in rules:
+            first_k.update(self._get_first_k_single_rule(k, symbol, rule))
 
+        return first_k
+
+    def _get_first_k_single_rule(self, k: int, symbol: str, rule: str):
+        # TODO: add are first params valid
         first_set = set()
         if not self._proto_contains_variable(rule):
             first_set.add(rule[:k])
