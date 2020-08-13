@@ -4,6 +4,11 @@
 
 **Samuel Hamman**
 
+
+## Pour le devoir
+
+Voir le fichier *IFT313_DEZZ2201_HAMS3110.pdf*. Les images du devoir sont aussi présents dans le dossiers *images* avec une plus grande qualité. 
+ 
 ## Description
 
 Implémentation de l'algorithm FIRST pour le devoir 5 (final) de IFT313. 
